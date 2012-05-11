@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<mx:HTML xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+
+		location="http://toki-woki.net/lab/airtinymce/editor.html"
+		creationComplete="onComplete()"
+		htmlDOMInitialize="onPageReady()">
+
+	<fx:Script><![CDATA[
+		protected function onComplete():void {
+			htmlLoader.textEncodingFallback='UTF-8';
+		}
+
+		protected function onPageReady():void {
+			win.onEditorReadyBridge=onEditorReady;
+		}
+
+		protected function onEditorReady():void {
+			if (_htmlText) htmlText=_htmlText;
+			if (_rtl) rtl=_rtl;
+			if (_isSourceMode) isSourceMode=_isSourceMode;
+			if (!_editable) editable=_editable;
+		}
+
+		protected function get win():Object {
+			return htmlLoader.window;
+		}
+
+		protected var _htmlText:String;
+		override public function get htmlText():String {
+			return win.getHTML();
+		}
+
+		override public function set htmlText(s:String):void {
+			_htmlText=s;
+			try {
+				win.setHTML(s);
+			} catch (er:Error) {
+			}
+		}
+
+		protected var _rtl:Boolean;
+		public function get rtl():Boolean {
+			return win.getRTL();
+		}
+
+		public function set rtl(b:Boolean):void {
+			_rtl=b;
+			try {
+				win.setRTL(b);
+			} catch (er:Error) {
+			}
+		}
+
+		protected var _isSourceMode:Boolean;
+		public function get isSourceMode():Boolean {
+			return win.getIsSourceMode();
+		}
+
+		public function set isSourceMode(b:Boolean):void {
+			_isSourceMode=b;
+			try {
+				win.setIsSourceMode(b);
+			} catch (er:Error) {
+			}
+		}
+
+		protected var _editable:Boolean=true;
+		public function get editable():Boolean {
+			return _editable;
+		}
+		public function set editable(b:Boolean):void {
+			_editable=b;
+			try {
+				win.setEditable(b);
+			} catch (er:Error) {}
+		}
+		]]></fx:Script>
+
+
+</mx:HTML>
