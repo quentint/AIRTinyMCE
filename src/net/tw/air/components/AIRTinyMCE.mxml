@@ -4,23 +4,33 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 
 		location="http://toki-woki.net/lab/airtinymce/editor.html"
+
 		creationComplete="onComplete()"
 		htmlDOMInitialize="onPageReady()">
+
+	<fx:Metadata>
+		[Event(name="change", type="flash.events.Event")]
+	</fx:Metadata>
 
 	<fx:Script><![CDATA[
 		protected function onComplete():void {
 			htmlLoader.textEncodingFallback='UTF-8';
+			htmlLoader.addEventListener(KeyboardEvent.KEY_UP,onKeyUp);
 		}
 
 		protected function onPageReady():void {
 			win.onEditorReadyBridge=onEditorReady;
+			win.onKeyUpBridge=onKeyUp;
 		}
 
+		protected function onKeyUp(e:KeyboardEvent):void {
+			dispatchEvent(new Event(Event.CHANGE));
+		}
+
+		protected var _editorReady:Boolean;
 		protected function onEditorReady():void {
-			if (_htmlText) htmlText=_htmlText;
-			if (_rtl) rtl=_rtl;
-			if (_isSourceMode) isSourceMode=_isSourceMode;
-			if (!_editable) editable=_editable;
+			_editorReady=true;
+			commitProperties();
 		}
 
 		protected function get win():Object {
@@ -28,54 +38,76 @@
 		}
 
 		protected var _htmlText:String;
+		protected var _htmlTextChanged:Boolean;
 		override public function get htmlText():String {
 			return win.getHTML();
 		}
-
 		override public function set htmlText(s:String):void {
+			if (s==_htmlText) return;
 			_htmlText=s;
-			try {
-				win.setHTML(s);
-			} catch (er:Error) {
-			}
+			_htmlTextChanged=true;
+			invalidateProperties();
 		}
 
 		protected var _rtl:Boolean;
+		protected var _rtlChanged:Boolean;
 		public function get rtl():Boolean {
 			return win.getRTL();
 		}
-
 		public function set rtl(b:Boolean):void {
+			if (b==_rtl) return;
 			_rtl=b;
-			try {
-				win.setRTL(b);
-			} catch (er:Error) {
-			}
+			_rtlChanged=true;
+			invalidateProperties();
 		}
 
 		protected var _isSourceMode:Boolean;
+		protected var _isSourceModeChanged:Boolean;
 		public function get isSourceMode():Boolean {
 			return win.getIsSourceMode();
 		}
-
 		public function set isSourceMode(b:Boolean):void {
+			if (b==_isSourceMode) return;
 			_isSourceMode=b;
-			try {
-				win.setIsSourceMode(b);
-			} catch (er:Error) {
-			}
+			_isSourceModeChanged=true;
+			invalidateProperties();
 		}
 
 		protected var _editable:Boolean=true;
+		protected var _editableChanged:Boolean;
 		public function get editable():Boolean {
 			return _editable;
 		}
 		public function set editable(b:Boolean):void {
+			if (b==_editable) return;
 			_editable=b;
-			try {
-				win.setEditable(b);
-			} catch (er:Error) {}
+			_editableChanged=true;
+			invalidateProperties();
 		}
+
+		override protected function commitProperties():void {
+			super.commitProperties();
+
+			if (!_editorReady) return;
+
+			if (_htmlTextChanged) {
+				win.setHTML(_htmlText);
+				_htmlTextChanged=false;
+			}
+			if (_rtlChanged) {
+				win.setRTL(_rtl);
+				_rtlChanged=false;
+			}
+			if (_isSourceModeChanged) {
+				win.setIsSourceMode(_isSourceMode);
+				_isSourceModeChanged=false;
+			}
+			if (_editableChanged) {
+				win.setEditable(_editable);
+				_editableChanged=false;
+			}
+		}
+
 		]]></fx:Script>
 
 
