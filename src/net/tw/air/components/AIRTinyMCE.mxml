@@ -23,7 +23,8 @@
 			win.onKeyUpBridge=onKeyUp;
 		}
 
-		protected function onKeyUp(e:KeyboardEvent):void {
+		protected function onKeyUp(e:KeyboardEvent=null):void {
+			_htmlText=win.getHTML();
 			dispatchEvent(new Event(Event.CHANGE));
 		}
 
@@ -40,7 +41,8 @@
 		protected var _htmlText:String;
 		protected var _htmlTextChanged:Boolean;
 		override public function get htmlText():String {
-			return win.getHTML();
+			return win ? win.getHTML() : _htmlText;
+			//return win.getHTML();
 		}
 		override public function set htmlText(s:String):void {
 			if (s==_htmlText) return;
@@ -51,8 +53,10 @@
 
 		protected var _rtl:Boolean;
 		protected var _rtlChanged:Boolean;
+		[Bindable]
 		public function get rtl():Boolean {
-			return win.getRTL();
+			//return win.getRTL();
+			return _rtl;
 		}
 		public function set rtl(b:Boolean):void {
 			if (b==_rtl) return;
@@ -63,8 +67,10 @@
 
 		protected var _isSourceMode:Boolean;
 		protected var _isSourceModeChanged:Boolean;
+		[Bindable]
 		public function get isSourceMode():Boolean {
-			return win.getIsSourceMode();
+			//return win.getIsSourceMode();
+			return _isSourceMode;
 		}
 		public function set isSourceMode(b:Boolean):void {
 			if (b==_isSourceMode) return;
@@ -75,6 +81,7 @@
 
 		protected var _editable:Boolean=true;
 		protected var _editableChanged:Boolean;
+		[Bindable]
 		public function get editable():Boolean {
 			return _editable;
 		}
