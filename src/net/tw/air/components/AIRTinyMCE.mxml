@@ -15,20 +15,22 @@
 	<fx:Script><![CDATA[
 		protected function onComplete():void {
 			htmlLoader.textEncodingFallback='UTF-8';
-			htmlLoader.addEventListener(KeyboardEvent.KEY_UP,onKeyUp);
+			htmlLoader.addEventListener(KeyboardEvent.KEY_UP,onEditAction);
+			htmlLoader.addEventListener(MouseEvent.CLICK,onEditAction);
 		}
 
 		protected function onPageReady():void {
 			win.onEditorReadyBridge=onEditorReady;
-			win.onKeyUpBridge=onKeyUp;
+			win.onKeyUpBridge=onEditAction;
 		}
 
-		protected function onKeyUp(e:KeyboardEvent=null):void {
+		protected function onEditAction(e:Event=null):void {
 			_htmlText=win.getHTML();
 			dispatchEvent(new Event(Event.CHANGE));
 		}
 
 		protected var _editorReady:Boolean;
+
 		protected function onEditorReady():void {
 			_editorReady=true;
 			commitProperties();
@@ -40,10 +42,11 @@
 
 		protected var _htmlText:String;
 		protected var _htmlTextChanged:Boolean;
+
 		override public function get htmlText():String {
 			return win ? win.getHTML() : _htmlText;
-			//return win.getHTML();
 		}
+
 		override public function set htmlText(s:String):void {
 			if (s==_htmlText) return;
 			_htmlText=s;
@@ -53,11 +56,12 @@
 
 		protected var _rtl:Boolean;
 		protected var _rtlChanged:Boolean;
+
 		[Bindable]
 		public function get rtl():Boolean {
-			//return win.getRTL();
 			return _rtl;
 		}
+
 		public function set rtl(b:Boolean):void {
 			if (b==_rtl) return;
 			_rtl=b;
@@ -67,11 +71,12 @@
 
 		protected var _isSourceMode:Boolean;
 		protected var _isSourceModeChanged:Boolean;
+
 		[Bindable]
 		public function get isSourceMode():Boolean {
-			//return win.getIsSourceMode();
 			return _isSourceMode;
 		}
+
 		public function set isSourceMode(b:Boolean):void {
 			if (b==_isSourceMode) return;
 			_isSourceMode=b;
@@ -81,10 +86,12 @@
 
 		protected var _editable:Boolean=true;
 		protected var _editableChanged:Boolean;
+
 		[Bindable]
 		public function get editable():Boolean {
 			return _editable;
 		}
+
 		public function set editable(b:Boolean):void {
 			if (b==_editable) return;
 			_editable=b;
@@ -114,7 +121,6 @@
 				_editableChanged=false;
 			}
 		}
-
 		]]></fx:Script>
 
 
